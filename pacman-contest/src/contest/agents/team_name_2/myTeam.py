@@ -15,9 +15,27 @@ class ReflexCaptureAgent(CaptureAgent):
     def __init__(self, index, time_for_computing=.1):
         super().__init__(index, time_for_computing)
         self.start = None
+        self.current_path = []
+        self.current_goal = None
+        self.last_position = None
+        self.beliefs = None
+        self.stuck_counter = 0
 
     def register_initial_state(self, game_state):
         self.start = game_state.get_agent_position(self.index)
+        self.walls = game_state.get_walls()
+        self.width = self.walls.width
+        self.height = self.walls.height
+        self.distance_matrix = {}
+        if self.red:
+            self.boundary = int(self.width / 2 - 1)
+            self.defense_area = list(range(self.boundary + 1))
+        else:
+            self.boundary = int(self.width / 2)
+            self.defense_area = list(range(self.boundary, self.width))
+
+        self.enemies = self.get_opponents(game_state)
+        self.initialize_beliefs(game_state)
         CaptureAgent.register_initial_state(self, game_state)
 
     def choose_action(self, game_state):
@@ -137,28 +155,11 @@ class ReflexCaptureAgent(CaptureAgent):
 class OffensiveReflexAgent(ReflexCaptureAgent):
     def __init__(self, index, time_for_computing=.1):
         super().__init__(index, time_for_computing)
-        self.current_path = [] 
-        self.current_goal = None 
-        self.last_position = None 
-        self.stuck_counter = 0 
         self.target_food = None  
         self.returning_home = False 
-        self.beliefs = None  
 
     def register_initial_state(self, game_state):
         super().register_initial_state(game_state)
-
-        self.walls = game_state.get_walls()
-        self.width = self.walls.width
-        self.height = self.walls.height
-        if self.red:
-            self.boundary = int(self.width / 2 - 1)
-        else:
-            self.boundary = int(self.width / 2)
-
-        self.enemies = self.get_opponents(game_state)
-        self.initialize_beliefs(game_state)
-        self.distance_matrix = {}
 
     def is_ghost_nearby(self, game_state, pos, distance_threshold=2):
         """Check if there's a ghost near the given position"""
@@ -513,31 +514,12 @@ class OffensiveReflexAgent(ReflexCaptureAgent):
 class DefensiveReflexAgent(ReflexCaptureAgent):
     def __init__(self, index, time_for_computing=.1):
         super().__init__(index, time_for_computing)
-        self.current_path = [] 
-        self.current_goal = None 
-        self.last_position = None 
-        self.stuck_counter = 0
         self.patrol_positions = []
-        self.patrol_index = 0 
-        self.beliefs = None 
-        self.distance_matrix = {}
+        self.patrol_index = 0
 
     def register_initial_state(self, game_state):
         super().register_initial_state(game_state)
-
-        self.walls = game_state.get_walls()
-        self.width = self.walls.width
-        self.height = self.walls.height
-        if self.red:
-            self.boundary = int(self.width / 2 - 1)
-            self.defense_area = list(range(self.boundary + 1))
-        else:
-            self.boundary = int(self.width / 2)
-            self.defense_area = list(range(self.boundary, self.width))
-
         self.generate_patrol_positions(game_state)
-        self.enemies = self.get_opponents(game_state)
-        self.initialize_beliefs(game_state)
 
     def generate_patrol_positions(self, game_state):
         """Generate strategic positions to patrol on our side"""
