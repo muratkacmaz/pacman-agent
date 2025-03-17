@@ -2,48 +2,16 @@
 #Umut Caliskan - U254835
 
 import random
-import numpy as np
-from collections import defaultdict
 import contest.util as util
-
 from contest.captureAgents import CaptureAgent
 from contest.game import Directions, Actions
 from contest.util import nearestPoint
 
-
-#################
-# Team creation #
-#################
-
 def create_team(first_index, second_index, is_red,
                 first='OffensiveReflexAgent', second='DefensiveReflexAgent', num_training=0):
-    """
-    This function should return a list of two agents that will form the
-    team, initialized using firstIndex and secondIndex as their agent
-    index numbers.  isRed is True if the red team is being created, and
-    will be False if the blue team is being created.
-
-    As a potentially helpful development aid, this function can take
-    additional string-valued keyword arguments ("first" and "second" are
-    such arguments in the case of this function), which will come from
-    the --redOpts and --blueOpts command-line arguments to capture.py.
-    For the nightly contest, however, your team will be created without
-    any extra arguments, so you should make sure that the default
-    behavior is what you want for the nightly contest.
-    """
     return [eval(first)(first_index), eval(second)(second_index)]
 
-
-##########
-# Agents #
-##########
-
-
 class ReflexCaptureAgent(CaptureAgent):
-    """
-    A base class for reflex agents that choose score-maximizing actions
-    """
-
     def __init__(self, index, time_for_computing=.1):
         super().__init__(index, time_for_computing)
         self.start = None
@@ -58,16 +26,8 @@ class ReflexCaptureAgent(CaptureAgent):
         CaptureAgent.register_initial_state(self, game_state)
 
     def choose_action(self, game_state):
-        """
-        Picks among the actions with the highest Q(s,a).
-        """
         actions = game_state.get_legal_actions(self.index)
-
-        # You can profile your evaluation time by uncommenting these lines
-        # start = time.time()
         values = [self.evaluate(game_state, a) for a in actions]
-        # print 'eval time for agent %d: %.4f' % (self.index, time.time() - start)
-
         max_value = max(values)
         best_actions = [a for a, v in zip(actions, values) if v == max_value]
 
@@ -88,9 +48,6 @@ class ReflexCaptureAgent(CaptureAgent):
         return random.choice(best_actions)
 
     def get_successor(self, game_state, action):
-        """
-        Finds the next successor which is a grid position (location tuple).
-        """
         successor = game_state.generate_successor(self.index, action)
         pos = successor.get_agent_state(self.index).get_position()
         if pos != nearestPoint(pos):
@@ -100,35 +57,23 @@ class ReflexCaptureAgent(CaptureAgent):
             return successor
 
     def evaluate(self, game_state, action):
-        """
-        Computes a linear combination of features and feature weights
-        """
         features = self.get_features(game_state, action)
         weights = self.get_weights(game_state, action)
         return features * weights
 
     def get_features(self, game_state, action):
-        """
-        Returns a counter of features for the state
-        """
         features = util.Counter()
         successor = self.get_successor(game_state, action)
         features['successor_score'] = self.get_score(successor)
         return features
 
     def get_weights(self, game_state, action):
-        """
-        Normally, weights do not depend on the game state.  They can be either
-        a counter or a dictionary.
-        """
         return {'successor_score': 1.0}
     
     def heuristic(self, pos, goal):
-        """Heuristic function for A* search - Manhattan distance"""
         return abs(int(pos[0]) - int(goal[0])) + abs(int(pos[1]) - int(goal[1]))
 
     def update_beliefs(self, game_state):
-        """Update beliefs about enemy positions"""
         for enemy in self.enemies:
             enemy_pos = game_state.get_agent_position(enemy)
             
@@ -151,7 +96,6 @@ class ReflexCaptureAgent(CaptureAgent):
                 self.beliefs[enemy] = new_belief
 
     def get_direction(self, current, next_pos):
-        """Convert a position change to a game action"""
         dx = next_pos[0] - current[0]
         dy = next_pos[1] - current[1]
         
@@ -167,7 +111,6 @@ class ReflexCaptureAgent(CaptureAgent):
             return Directions.STOP
 
     def initialize_beliefs(self, game_state):
-        """Initialize belief distributions for enemy positions"""
         self.beliefs = {}
         for enemy in self.enemies:
             beliefs = util.Counter()
@@ -185,10 +128,6 @@ class ReflexCaptureAgent(CaptureAgent):
             self.beliefs[enemy] = beliefs
 
 class OffensiveReflexAgent(ReflexCaptureAgent):
-    """
-    A reflex agent that seeks food using A* search algorithm for pathfinding.
-    Optimized for speed and maximum score collection.
-    """
 
     def __init__(self, index, time_for_computing=.1):
         super().__init__(index, time_for_computing)
@@ -581,9 +520,6 @@ class OffensiveReflexAgent(ReflexCaptureAgent):
         return weights
 
 class DefensiveReflexAgent(ReflexCaptureAgent):
-    """
-    A defensive agent that uses A* search algorithm for efficient patrol and invader tracking.
-    """
 
     def __init__(self, index, time_for_computing=.1):
         super().__init__(index, time_for_computing)
