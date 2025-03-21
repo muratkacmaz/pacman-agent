@@ -3,9 +3,10 @@
 
 import random
 import contest.util as util
-from contest.captureAgents import CaptureAgent
-from contest.game import Directions, Actions
-from contest.util import nearestPoint
+
+from contest.capture_agents import CaptureAgent
+from contest.game import Directions
+from contest.util import nearest_point
 
 def create_team(first_index, second_index, is_red,
                 first='OffensiveReflexAgent', second='DefensiveReflexAgent', num_training=0):
@@ -50,7 +51,7 @@ class ReflexCaptureAgent(CaptureAgent):
     def get_successor(self, game_state, action):
         successor = game_state.generate_successor(self.index, action)
         pos = successor.get_agent_state(self.index).get_position()
-        if pos != nearestPoint(pos):
+        if pos != nearest_point(pos):
             # Only half a grid position was covered
             return successor.generate_successor(self.index, action)
         else:
@@ -208,7 +209,7 @@ class OffensiveReflexAgent(ReflexCaptureAgent):
 
         have_capsule, _ = self.get_capsule_safety(game_state, start)
 
-        while not open_set.isEmpty():
+        while not open_set.is_empty():
             # Get node with lowest f value
             (current, path) = open_set.pop()
 
@@ -603,7 +604,7 @@ class DefensiveReflexAgent(ReflexCaptureAgent):
         closed_set = set()
         g_values = {start: 0}
 
-        while not open_set.isEmpty():
+        while not open_set.is_empty():
             (current, path) = open_set.pop()
 
             if current == goal:

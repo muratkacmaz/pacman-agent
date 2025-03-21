@@ -41,14 +41,14 @@ This is an adapted version from the [official contest page](http://ai.berkeley.e
 
 The course contest involves a multi-player capture-the-flag variant of Pacman, where agents control both Pacman and ghosts in coordinated team-based strategies. Your team will try to eat the food on the far side of the map, while defending the food on your home side. 
 
-There are many files in this package, most of them implementing the game itself. The **only** file that you should work on is `myTeam.py` and this will be the only file that you will submit.
+There are many files in this package, most of them implementing the game itself. The **only** file that you should work on is `my_team.py` and this will be the only file that you will submit.
 
 ### Key files to read:
 
 * `capture.py`: The main file that runs games locally. This file also describes the new capture the flag GameState type and rules.
 * `captureAgents.py`: Specification and helper methods for capture agents.
-* `baselineTeam.py`: Example code that defines two very basic reflex agents, to help you get started.
-* `myTeam.py`: This is where you define your own solution agents (and the only thing used go run the contest).
+* `baseline_team.py`: Example code that defines two very basic reflex agents, to help you get started.
+* `my_team.py`: This is where you define your own solution agents (and the only thing used go run the contest).
 
 ### Supporting files (do not modify):
 
@@ -102,7 +102,7 @@ If you agent times out or otherwise throws an exception, an error message will b
 
 ## Getting Started
 
-By default, you can run a game with the simple `baselineTeam` that the staff has provided:
+By default, you can run a game with the simple `baseline_team` that the staff has provided:
 
 ```bash
 $ python3 capture.py
@@ -117,18 +117,18 @@ $ python3 capture.py --help
 ```
 
 There are four slots for agents, where agents 0 and 2 are always on the red team, and 1 and 3 are on the blue team. Agents are created by agent factories (one for Red, one for Blue). See the section on designing
-agents for a description of the agents invoked above. The only team that we provide is the `baselineTeam`. It is chosen by default as both the red and blue team, but as an example of how to choose teams:
+agents for a description of the agents invoked above. The only team that we provide is the `baseline_team`. It is chosen by default as both the red and blue team, but as an example of how to choose teams:
 
 ```python
-$ python3 capture.py -r baselineTeam -b baselineTeam
+$ python3 capture.py -r baseline_team -b baseline_team
 ```
 
-which specifies that the red team `-r` and the blue team `-b` are both created from `baselineTeam.py`.
+which specifies that the red team `-r` and the blue team `-b` are both created from `baseline_team.py`.
 
 To specify agents elsewhere:
 
 ```shell
-$ python3 capture.py -r path/to/red/team/myTeam.py -b path/to/blue/team/myTeam.py
+$ python3 capture.py -r path/to/red/team/my_team.py -b path/to/blue/team/my_team.py
 ```
 
 To control one of the four agents with the keyboard, pass the appropriate option:
@@ -149,7 +149,7 @@ Unlike project 2, an agent now has the more complex job of trading off offense v
 
 ### Baseline Team:
 
-To kick-start your agent design, we have provided you with a team of two baseline agents, defined in `baselineTeam.py`. They are both quite bad. The `OffensiveReflexAgent` moves toward the closest food on the opposing side. The `DefensiveReflexAgent` wanders around on its own side and tries to chase down invaders it happens to see.
+To kick-start your agent design, we have provided you with a team of two baseline agents, defined in `baseline_team.py`. They are both quite bad. The `OffensiveReflexAgent` moves toward the closest food on the opposing side. The `DefensiveReflexAgent` wanders around on its own side and tries to chase down invaders it happens to see.
 
 ### Interface:
 
@@ -165,7 +165,7 @@ To facilitate agent development, we provide code in `distanceCalculator.py` to s
 To get started designing your own agent, we recommend subclassing the `CaptureAgent` class. This provides access to several convenience methods. Some useful methods are:
 
 ```python
-      def getFood(self, gameState):
+      def get_food(self, gameState):
         """
         Returns the food you're meant to eat. This is in the form
         of a matrix where m[x][y]=true if there is food you can
@@ -192,7 +192,7 @@ To get started designing your own agent, we recommend subclassing the `CaptureAg
         the numbers of the agents (e.g., red might be "1,3,5")
         """
 
-      def getScore(self, gameState):
+      def get_score(self, gameState):
         """
         Returns how much you are beating the other team by in the
         form of a number that is the difference between your score
@@ -261,12 +261,12 @@ The **results** of each tournament (pre-contest, preliminary, and final) will be
 * Your code will be run by the following command:
 
     ```shell
-    python3 capture.py --delay 0.0 -r teams/<team1>/myTeam.py -b teams/<team2>/myTeam.py
+    python3 capture.py --delay 0.0 -r teams/<team1>/my_team.py -b teams/<team2>/my_team.py
     ```
 
-    please make sure your `AgentFactory` is defined in `myTeam.py`.
+    please make sure your `AgentFactory` is defined in `my_team.py`.
 
-* You may have coded supported files that you will import in your `myTeam.py`, for example a module  `abc.py`. In order for the contest script to find it you need to do it this way:
+* You may have coded supported files that you will import in your `my_team.py`, for example a module  `abc.py`. In order for the contest script to find it you need to do it this way:
 
   ```python
   import os
